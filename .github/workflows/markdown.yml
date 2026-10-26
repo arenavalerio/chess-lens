@@ -1,0 +1,37 @@
+name: Markdown Lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "AGENTS.md"
+      - "LICENSE"
+      - "docs/**/*.md"
+      - ".markdownlint-cli2.jsonc"
+      - ".github/workflows/markdown.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "AGENTS.md"
+      - "LICENSE"
+      - "docs/**/*.md"
+      - ".markdownlint-cli2.jsonc"
+      - ".github/workflows/markdown.yml"
+  workflow_dispatch:
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Lint Markdown (markdownlint-cli2)
+        uses: DavidAnson/markdownlint-cli2-action@v24
+        with:
+          globs: |
+            README.md
+            AGENTS.md
+            docs/**/*.md

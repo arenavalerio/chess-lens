@@ -1,0 +1,19 @@
+# Virtual environments and version control
+.venv/
+.git/
+.gitignore
+
+# Python bytecode and caches
+**/__pycache__/
+**/*.py[cod]
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.pyscn/
+
+# Test/coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+.coverage.xml

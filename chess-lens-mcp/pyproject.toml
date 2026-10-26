@@ -1,0 +1,139 @@
+# Installable package: uv builds and installs it into the environment, so the
+# server is available as ``python -m chess_lens_mcp`` and the ``chess-lens-mcp``
+# console script rather than being run from a source path.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "chess-lens-mcp"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=3.0.0",
+    "pydantic>=2.0",
+    "python-chess>=1.999",
+]
+
+[project.scripts]
+chess-lens-mcp = "chess_lens_mcp.__main__:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+dev = [
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pytest-cov>=4.0",
+    "pyscn>=1.0.0",
+]
+
+# ---------------------------------------------------------------------------
+# Linting and formatting (ruff)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+src = ["src", "tests"]
+exclude = [
+    ".venv",
+    "__pycache__",
+    ".pyscn",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # Pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "BLE",  # flake8-blind-except
+    "SIM",  # flake8-simplify
+    "PTH",  # flake8-use-pathlib
+    "RUF",  # Ruff-specific rules
+    "S110", # flake8-bandit: try/except/pass
+    "S112", # flake8-bandit: try/except/continue
+]
+
+[tool.ruff.lint.flake8-bandit]
+check-typed-exception = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["chess_lens_mcp"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101", # pytest relies on bare asserts
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# ---------------------------------------------------------------------------
+# Type checking (mypy)
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+mypy_path = "src"
+explicit_package_bases = true
+warn_unused_ignores = true
+
+# Tests exercise loosely-typed fixtures and the FastMCP client; keep them type
+# checked (check_untyped_defs) without forcing full annotation coverage yet.
+[[tool.mypy.overrides]]
+module = ["tests.*", "test_mcp_server"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+
+# ---------------------------------------------------------------------------
+# Testing (pytest + coverage)
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "-ra",
+]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    # Engine/subprocess transports are finalized during GC after the child
+    # exits; those teardown warnings are noise, not test failures.
+    "ignore::ResourceWarning",
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["*/tests/*", "*/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+fail_under = 80
+
+# ---------------------------------------------------------------------------
+# Structural analysis (pyscn)
+# ---------------------------------------------------------------------------
+[tool.pyscn.complexity]
+low_threshold = 9
+medium_threshold = 14
+max_complexity = 15
