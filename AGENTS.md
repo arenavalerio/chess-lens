@@ -31,7 +31,7 @@ Rules live in `.markdownlint-cli2.jsonc`: the default set minus `MD013` (line le
 
 ## Stockfish dependency
 
-- The engine path defaults to `/usr/games/stockfish` (`chess_lens_mcp/engine.py`); install with `apt-get install stockfish`. Missing binary means runtime failures.
+- The engine path defaults to `/usr/games/stockfish` (`chess_lens_mcp/engine.py`); install the pinned Stockfish 16.0 x86-64 Linux release with `python3 install_stockfish.py` from `chess-lens-mcp/`. Missing binary means runtime failures.
 - HCE feature evidence runs Stockfish with `Use NNUE false` (classical `eval` table); move ranking runs `Use NNUE true`. Keep the two paths separate.
 - Real-engine tests use `@needs_stockfish` and skip when the binary is absent. There is no registered `integration` marker despite the module docstring's `pytest -m "not integration"` advice.
 - Unit tests mock `chess.engine.popen_uci` and `StockfishEngine.run_hce_batch`; follow that pattern instead of invoking the engine.

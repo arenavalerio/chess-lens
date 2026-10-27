@@ -3,9 +3,13 @@
 FROM python:3.11-slim-bookworm AS base
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends stockfish && \
-    ln -s /usr/games/stockfish /usr/bin/stockfish && \
+    apt-get install -y --no-install-recommends ca-certificates && \
     rm -rf /var/lib/apt/lists/*
+
+COPY install_stockfish.py /tmp/install_stockfish.py
+RUN python /tmp/install_stockfish.py && \
+    ln -s /usr/games/stockfish /usr/bin/stockfish && \
+    rm /tmp/install_stockfish.py
 
 # Use the uv project workflow (pyproject.toml + uv.lock) instead of pip.
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/

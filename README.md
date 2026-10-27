@@ -57,13 +57,7 @@ See the [MCP Tools](#mcp-tools) table for the full list and [`docs/tools.md`](do
 ## Requirements
 
 - **Python 3.11 or newer.**
-- **Stockfish** — the server shells out to the engine. It invokes the binary at `/usr/games/stockfish` by default; install it there:
-
-  ```bash
-  sudo apt-get update && sudo apt-get install -y stockfish
-  ```
-
-  Move ranking runs Stockfish with NNUE enabled; HCE feature evidence runs the same engine with `Use NNUE false` (the classical `eval` table). Both paths need the binary.
+- **Stockfish 16.0 on x86-64 Linux.** CI and Docker use the official `sf_16` release asset and the shared installer, which verifies its SHA-256 before installation. For local use, run the same installer from `chess-lens-mcp/`; it installs the executable under `/opt/stockfish-16.0` and exposes it at `/usr/games/stockfish`. Move ranking runs Stockfish with NNUE enabled; HCE feature evidence runs the same engine with `Use NNUE false` (the classical `eval` table). Both paths need the binary.
 - **Docker** — optional, only for the container workflow.
 
 ## Installation
@@ -78,7 +72,7 @@ docker build -t chess-lens-mcp chess-lens-mcp
 docker build --target test -t chess-lens-mcp:test chess-lens-mcp
 ```
 
-The runtime image installs Stockfish and the `chess-lens-mcp` package into `/app/.venv`, then starts the `chess-lens-mcp` console script. No `PYTHONPATH` or source path is needed.
+The runtime image installs the pinned Stockfish 16.0 release and the `chess-lens-mcp` package into `/app/.venv`, then starts the `chess-lens-mcp` console script. No `PYTHONPATH` or source path is needed.
 
 ### Local
 
@@ -86,6 +80,7 @@ Run from the `chess-lens-mcp` directory — all tool configuration lives in its 
 
 ```bash
 cd chess-lens-mcp
+sudo python3 install_stockfish.py
 uv sync --all-extras           # install every dependency group
 uv run python -m chess_lens_mcp   # or: uv run chess-lens-mcp
 ```

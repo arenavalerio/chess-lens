@@ -23,8 +23,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Stockfish
-        run: sudo apt-get update && sudo apt-get install -y stockfish
+      - name: Install pinned Stockfish
+        run: sudo python3 install_stockfish.py
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5

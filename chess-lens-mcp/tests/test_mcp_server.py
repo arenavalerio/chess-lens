@@ -1505,6 +1505,7 @@ class TestMcpIntegration:
             assert len(position["candidates"][0]["pv"]) <= 6
             assert "total" in move["baseline_hce"]
             assert "total" in move["hce_deltas"]
+            assert set(move["hce_deltas"]) - {"total"}
             assert "score_cp" in move
             assert len(move["pv"]) <= 6
         finally:
