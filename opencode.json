@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "chess-lens-mcp": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "chess-lens-mcp"
+      ],
+      "enabled": true,
+      "env": {
+        "GOOGLE_API_KEY": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  // markdownlint-cli2 configuration.
+  // Reference: https://github.com/DavidAnson/markdownlint-cli2#configuration
+  //
+  // Scope matches CI (.github/workflows/markdown.yml): the top-level docs only.
+  "globs": ["README.md", "AGENTS.md", "docs/**/*.md"],
+  "config": {
+    // Start from the full default rule set, then relax the rules the docs
+    // already rely on so the linter catches real mistakes without a rewrite.
+    "default": true,
+    // Long prose lines and wide tables are intentional in these docs.
+    "MD013": false,
+    // ASCII diagrams and directory trees intentionally omit a fence language.
+    "MD040": false
+  }
+}

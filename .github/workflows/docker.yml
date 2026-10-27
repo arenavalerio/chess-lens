@@ -1,0 +1,44 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "chess-lens-mcp/**"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "chess-lens-mcp/**"
+      - ".github/workflows/docker.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and test test image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./chess-lens-mcp
+          file: ./chess-lens-mcp/Dockerfile
+          target: test
+          tags: chess-lens-mcp:test
+          push: false
+          load: false
+
+      - name: Build production image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./chess-lens-mcp
+          file: ./chess-lens-mcp/Dockerfile
+          target: runtime
+          tags: chess-lens-mcp:latest
+          push: false
+          load: false

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "coding-standards": {
+      "source": "ludo-technologies/python-best-practices",
+      "sourceType": "github",
+      "skillPath": "skills/coding-standards/SKILL.md",
+      "computedHash": "53dd4c4d0ee62dce4d4687ae30183c219be61ef43ff1bbbf345d0a92e7585801"
+    },
+    "testing": {
+      "source": "ludo-technologies/python-best-practices",
+      "sourceType": "github",
+      "skillPath": "skills/testing/SKILL.md",
+      "computedHash": "2794c4b079297f46ae31703bbf7d94f5e382f697da230e2b0755b0fc4d65a538"
+    },
+    "tooling": {
+      "source": "ludo-technologies/python-best-practices",
+      "sourceType": "github",
+      "skillPath": "skills/tooling/SKILL.md",
+      "computedHash": "658e7b4ecdb8e4e5d8b6b748680b0b7f979d2124b04c926932a3a1b2e9c32a71"
+    }
+  }
+}
