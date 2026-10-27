@@ -27,11 +27,13 @@ def download_release(destination: Path) -> None:
     request = urllib.request.Request(
         RELEASE_URL, headers={"User-Agent": "chess-lens-mcp-installer"}
     )
-    with urllib.request.urlopen(request, timeout=120) as response:
-        with destination.open("wb") as archive_file:
-            while chunk := response.read(1024 * 1024):
-                digest.update(chunk)
-                archive_file.write(chunk)
+    with (
+        urllib.request.urlopen(request, timeout=120) as response,
+        destination.open("wb") as archive_file,
+    ):
+        while chunk := response.read(1024 * 1024):
+            digest.update(chunk)
+            archive_file.write(chunk)
 
     actual_digest = digest.hexdigest()
     if actual_digest != RELEASE_SHA256:
@@ -51,7 +53,9 @@ def copy_archive_member(
             f"Stockfish release archive is missing {member_name}"
         ) from error
     if not member.isfile():
-        raise RuntimeError(f"Stockfish release entry is not a regular file: {member_name}")
+        raise RuntimeError(
+            f"Stockfish release entry is not a regular file: {member_name}"
+        )
 
     source: BinaryIO | None = archive.extractfile(member)
     if source is None:
@@ -83,8 +87,8 @@ def main() -> None:
                     archive, ARCHIVE_LICENSE, staging_path / "Copying.txt"
                 )
             staged_executable.chmod(0o755)
-            os.replace(staged_executable, EXECUTABLE)
-            os.replace(staging_path / "Copying.txt", INSTALL_DIR / "Copying.txt")
+            staged_executable.replace(EXECUTABLE)
+            (staging_path / "Copying.txt").replace(INSTALL_DIR / "Copying.txt")
 
     EXECUTABLE_LINK.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
@@ -92,7 +96,7 @@ def main() -> None:
     ) as temp_dir:
         staged_link = Path(temp_dir) / EXECUTABLE_LINK.name
         staged_link.symlink_to(EXECUTABLE)
-        os.replace(staged_link, EXECUTABLE_LINK)
+        staged_link.replace(EXECUTABLE_LINK)
 
 
 if __name__ == "__main__":
