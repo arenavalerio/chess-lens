@@ -76,7 +76,7 @@ The runtime image installs the pinned Stockfish 16.0 release and the `chess-lens
 
 ### Local
 
-Run from the `chess-lens-mcp` directory — all tool configuration lives in its `pyproject.toml`:
+Run from the `chess-lens-mcp` directory:
 
 ```bash
 cd chess-lens-mcp
@@ -93,7 +93,7 @@ The server is configured through its callers rather than environment variables:
 
 - **Engine path** — the Stockfish binary path defaults to `/usr/games/stockfish` (the `StockfishEngine` default in `src/chess_lens_mcp/engine.py`).
 - **Search depth** — selectable per call for `analyze_game` and `identify_key_moves` via `depth` (default `12`).
-- **MCP connection** — register the server in your client; the workspace `opencode.json` uses `docker run -i --rm chess-lens-mcp`.
+- **MCP connection** — register the server in your client;
 
 ## MCP Tools
 
@@ -113,81 +113,6 @@ Full contract, including JSON samples and error rules: [`docs/tools.md`](docs/to
 
 - **`skills/comment-game/`** — turns one legal game into a commented PGN. It calls `analyze_game` once for the per-ply skeleton and `identify_key_moves` once for turning-point classification, then uses `fen_from_pgn` with `analyze_position`/`analyze_move` only for plies that need a continuation. It writes exactly one short comment (at most 35 words) after every main-line ply, applies standard quality glyphs from centipawn-loss bands, and returns the commented PGN in chat (saving to a file only when asked).
 - **`skills/evaluate-position/`** — evaluates one validated FEN and returns `Evaluation`, `White Plans`, `Black Plans`, and `Next Move`, all grounded in returned HCE and NNUE evidence.
-
-Both skills mirror the behavior defined in [`openspec/specs/chess-game-commentary/spec.md`](openspec/specs/chess-game-commentary/spec.md).
-
-## Architecture
-
-```
-        FEN / UCI / PGN
-              |
-              v
-   +--------------------+        +----------------------------+
-   | tools.py           |        | engine.py                  |
-   |  5 MCP tools       | -----> | StockfishEngine            |
-   +--------------------+        |   Use NNUE true  -> ranking|
-        |   |   |                |   Use NNUE false -> HCE    |
-        |   |   |                +----------------------------+
-        |   |   +--> key_moves.py (selection + classification)
-        |   +------> evaluation.py (HCE blending, phase taper)
-        +----------> parsing.py   (FEN/PGN validation, selectors)
-```
-
-- **`parsing.py`** validates complete legal FENs and single-game PGNs and resolves `move_number`/`color` selectors.
-- **`engine.py`** runs one Stockfish process per batch and keeps the NNUE-ranking and classical-HCE paths separate.
-- **`evaluation.py`** blends HCE features with the non-pawn material phase and prunes negligible deltas.
-- **`key_moves.py`** derives Delta-W, Sharpness, and Swing and selects commentary-worthy plies.
-- **`tools.py`** registers the five FastMCP tools over stdio.
-
-## Project Structure
-
-```
-chess-lens-mcp/
-|-- src/chess_lens_mcp/     engine, parsing, evaluation, key_moves, tools
-|-- tests/test_mcp_server.py
-|-- Dockerfile              base -> test / runtime targets
-`-- pyproject.toml          uv + ruff + mypy + pytest + pyscn
-
-skills/
-|-- comment-game/SKILL.md
-`-- evaluate-position/SKILL.md
-
-docs/tools.md               full MCP tool reference
-openspec/specs/             normative capability specs
-```
-
-## Development
-
-Run everything from `chess-lens-mcp`:
-
-```bash
-uv sync --all-extras           # create .venv and install every dependency group
-uv run ruff check .            # lint
-uv run ruff format --check .   # formatting
-uv run mypy src tests          # type check (strict on src)
-uv run pytest --cov=src        # tests; coverage must stay >= 80
-uv run pyscn check .           # complexity, dead code, clones, cycles
-```
-
-CI (`.github/workflows/python.yml`) runs the same gate in that order. `uv.lock` is committed — re-run `uv lock` after changing dependencies. Tests cover legal FEN and PGN validation, NNUE/HCE separation, per-ply evidence, key-move selection, tool registration, and stdio behavior; real-Stockfish integration tests skip when the binary is absent.
-
-The top-level docs (`README.md`, `AGENTS.md`, `docs/`) are linted with [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2). Run it from the repository root; `.github/workflows/markdown.yml` runs the same check in CI:
-
-```bash
-npx markdownlint-cli2
-```
-
-A single test:
-
-```bash
-uv run pytest tests/test_mcp_server.py::TestMcpIntegration -v
-```
-
-## Contributing
-
-1. Fork the repository and create a topic branch.
-2. Keep changes consistent with the existing structure and run the full quality gate above before opening a pull request.
-3. Update the matching spec under `openspec/specs/` when you change behavior, and `docs/tools.md` when you change the tool contract.
 
 ## License
 
