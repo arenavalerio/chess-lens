@@ -114,7 +114,6 @@ Full contract, including JSON samples and error rules: [`docs/tools.md`](docs/to
 - **`skills/comment-game/`** — turns one legal game into a commented PGN. It calls `analyze_game` once for the per-ply skeleton and `identify_key_moves` once for turning-point classification, then uses `fen_from_pgn` with `analyze_position`/`analyze_move` only for plies that need a continuation. It writes exactly one short comment (at most 35 words) after every main-line ply, applies standard quality glyphs from centipawn-loss bands, and returns the commented PGN in chat (saving to a file only when asked).
 - **`skills/evaluate-position/`** — evaluates one validated FEN and returns `Evaluation`, `White Plans`, `Black Plans`, and `Next Move`, all grounded in returned HCE and NNUE evidence.
 
-
 ## License
 
 Released under the [MIT License](LICENSE).
