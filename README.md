@@ -57,7 +57,7 @@ See the [MCP Tools](#mcp-tools) table for the full list and [`docs/tools.md`](do
 ## Requirements
 
 - **Python 3.11 or newer.**
-- **Stockfish 16.0 on x86-64 Linux.** CI and Docker use the official `sf_16` release asset and the shared installer, which verifies its SHA-256 before installation. For local use, run the same installer from `chess-lens-mcp/`; it installs the executable under `/opt/stockfish-16.0` and exposes it at `/usr/games/stockfish`. Move ranking runs Stockfish with NNUE enabled; HCE feature evidence runs the same engine with `Use NNUE false` (the classical `eval` table). Both paths need the binary.
+- **Stockfish 16.0.** CI and Docker use the official `sf_16` release asset and the shared installer, which verifies its SHA-256 before installation. For local use, run the same installer from `chess-lens-mcp/`; it installs the executable under `/opt/stockfish-16.0` and exposes it at `/usr/games/stockfish`. Move ranking runs Stockfish with NNUE enabled; HCE feature evidence runs the same engine with `Use NNUE false` (the classical `eval` table). Both paths need the binary.
 - **Docker** — optional, only for the container workflow.
 
 ## Installation
